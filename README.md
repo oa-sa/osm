@@ -41,4 +41,4 @@ Attribution: © OpenStreetMap contributors
 
 ## License
 
-This code is released under [CC0 1.0](LICENSE) — public domain.
+This code is released under [CC0 1.0](LICENSE) - public domain.
