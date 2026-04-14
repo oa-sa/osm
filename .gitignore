@@ -1,0 +1,5 @@
+output/
+*.osm.pbf
+*.geojson
+__pycache__/
+*.pyc

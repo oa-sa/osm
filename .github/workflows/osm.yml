@@ -1,0 +1,75 @@
+name: Run OSM Extract
+
+on:
+  workflow_dispatch:
+
+jobs:
+  extract:
+    name: Download, Filter, Convert
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install osmium-tool
+        run: sudo apt-get install -y osmium-tool
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install -r requirements.txt
+
+      - name: Run OSM extract
+        run: python run.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: osm-data
+          path: output/
+          retention-days: 1
+
+  publish:
+    name: Publish to Data Repo
+    runs-on: ubuntu-latest
+    needs: [extract]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: osm-data
+          path: output/
+
+      - name: Clone data repo
+        run: |
+          git clone https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/commons-au/data.git data-repo
+
+      - name: Copy OSM data
+        run: |
+          mkdir -p data-repo/osm
+          find data-repo/osm -name '*.csv' | xargs rm -f
+          cp output/osm_social_facilities.csv data-repo/osm/
+
+          # Generate SOURCES.md
+          cat > data-repo/osm/SOURCES.md << 'SOURCES_EOF'
+          # Data Sources and Attribution
+
+          Data sourced from OpenStreetMap via Geofabrik extract.
+
+          ## Attribution
+
+          - **OpenStreetMap contributors**, National, *Social Facilities, Community Centres, NGOs, Charities*, [openstreetmap.org](https://www.openstreetmap.org). License: ODbL (Open Database License)
+
+          © OpenStreetMap contributors. Data available under the Open Database License.
+          SOURCES_EOF
+
+      - name: Commit and push
+        run: |
+          cd data-repo
+          git config user.name "commons-au-bot"
+          git config user.email "bot@commons-au.org"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update OSM data ($(date -u +%Y-%m-%d))"
+            git push
+          fi
