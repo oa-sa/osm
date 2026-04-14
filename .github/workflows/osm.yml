@@ -40,7 +40,7 @@ jobs:
 
       - name: Clone data repo
         run: |
-          git clone https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/commons-au/data.git data-repo
+          git clone https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/oa-sa/data.git data-repo
 
       - name: Copy OSM data
         run: |
@@ -64,8 +64,8 @@ jobs:
       - name: Commit and push
         run: |
           cd data-repo
-          git config user.name "commons-au-bot"
-          git config user.email "bot@commons-au.org"
+          git config user.name "oa-sa-bot"
+          git config user.email "bot@oa-sa.org"
           git add -A
           if git diff --cached --quiet; then
             echo "No changes to commit."

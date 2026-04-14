@@ -1,13 +1,13 @@
-# commons-au/osm
+# oa-sa/osm
 
-Extracts social facility data from OpenStreetMap for Australia and publishes it to [commons-au/data](https://github.com/commons-au/data).
+Extracts social facility data from OpenStreetMap for Australia and publishes it to [oa-sa/data](https://github.com/oa-sa/data).
 
 ## How It Works
 
 1. Downloads the full Australia OSM extract from [Geofabrik](https://download.geofabrik.de/australia-oceania.html) (~889 MB)
 2. Filters for social facilities, community centres, NGOs, and charities using `osmium-tool`
 3. Converts the filtered data to CSV
-4. Pushes to `commons-au/data/osm/`
+4. Pushes to `oa-sa/data/osm/`
 
 ## What It Extracts
 
